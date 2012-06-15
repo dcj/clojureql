@@ -8,7 +8,7 @@
   default global connection."
   ([specs] (open-global ::clojureql.internal/default-connection specs))
   ([conn-name specs]
-     (let [con (jdbcint/get-connection specs)]
+     (let [con (#'jdbc/get-connection specs)]
        (when-let [ac (-> specs :auto-commit)]
          (.setAutoCommit con ac))
        (swap! global-connections assoc conn-name {:connection con :opts specs}))))
@@ -42,13 +42,13 @@
   (io!
    (cond
 
-    (find-connection*) ; an already open c.j.jdbc connection takes precedence
+    (jdbc/find-connection) ; an already open c.j.jdbc connection takes precedence
     (func)
     
     (map? con-info) ; then we try a passed connection info (presumably associated with some table in the query)
-    (with-open [con (jdbcint/get-connection con-info)]
-      (binding [jdbcint/*db*
-                (assoc jdbcint/*db*
+    (with-open [con (#'jdbc/get-connection con-info)]
+      (binding [jdbc/*db*
+                (assoc jdbc/*db*
                   :connection con
                   :level 0
                   :rollback (atom false)
@@ -59,8 +59,8 @@
     :default ; try global connection
     (if-let [con (@clojureql.core/global-connections
                   (or con-info :clojureql.internal/default-connection))]
-      (binding [jdbcint/*db*
-                (assoc jdbcint/*db*
+      (binding [jdbc/*db*
+                (assoc jdbc/*db*
                   :connection (:connection con)
                   :level 0
                   :rollback (atom false)

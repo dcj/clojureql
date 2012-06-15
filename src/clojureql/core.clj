@@ -7,12 +7,12 @@
              Please see the http://www.clojureql.org for documentation"
     :url    "http://github.com/LauJensen/clojureql"}
   (:refer-clojure
-   :exclude [take drop sort distinct conj! disj! compile case])
+   :exclude [take drop sort distinct conj! disj! compile case resultset-seq])
   (:use
     [clojureql internal predicates]
     [clojure.string :only [join upper-case] :rename {join join-str}]
-    [clojure.java.jdbc :only [delete-rows]]
-    [clojure.java.jdbc.internal :as jdbcint]
+    [clojure.java.jdbc :as jdbc]
+;;    [clojure.java.jdbc.internal :as jdbc]
     [clojure.core.incubator :only [-?> -?>>]]
     [clojure.walk :only (postwalk-replace)]))
 
@@ -331,7 +331,7 @@
 
   (disj! [this predicate]
      (with-cnx cnx
-       (delete-rows tname (into [(str predicate)] (:env predicate))))
+       (jdbc/delete-rows tname (into [(str predicate)] (:env predicate))))
     this)
 
   (update-in! [this pred record]
