@@ -365,7 +365,7 @@
   (try (.supportsGetGeneratedKeys (.getMetaData conn))
        (catch AbstractMethodError _ false)))
 
-(defn cql-prepare-statement [conn sql]
+(defn prepare-statement [conn sql]
   "When supported by the JDBC Driver, creates a new prepared statement which will return the generated keys - else returns a 'normal' prepared statement"
   (if (supports-generated-keys? conn)
     (jdbc/prepare-statement conn sql :return-keys true)
@@ -385,7 +385,7 @@
   open database connection. Each param-group is a seq of values for all of
   the parameters."
   ([sql param-group]
-     (with-open [stmt (cql-prepare-statement (jdbc/find-connection) sql)]
+     (with-open [stmt (prepare-statement (jdbc/find-connection) sql)]
        (doseq [[idx v] (map vector (iterate inc 1) param-group)]
          (.setObject stmt idx v))
        (jdbc/transaction

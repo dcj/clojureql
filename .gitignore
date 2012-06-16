@@ -5,3 +5,6 @@ pom.xml
 lib
 classes
 build
+.lein-deps-sum
+target/
+
