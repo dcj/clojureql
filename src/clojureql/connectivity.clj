@@ -1,5 +1,7 @@
 (in-ns 'clojureql.core)
 
+(require '(clojure.java.jdbc))
+
 (def global-connections (atom {}))
 
 (defn open-global
@@ -47,8 +49,8 @@
     
     (map? con-info) ; then we try a passed connection info (presumably associated with some table in the query)
     (with-open [con (#'jdbc/get-connection con-info)]
-      (binding [jdbc/*db*
-                (assoc jdbc/*db*
+      (binding [clojure.java.jdbc/*db*
+                (assoc #'jdbc/*db*
                   :connection con
                   :level 0
                   :rollback (atom false)
@@ -59,8 +61,8 @@
     :default ; try global connection
     (if-let [con (@clojureql.core/global-connections
                   (or con-info :clojureql.internal/default-connection))]
-      (binding [jdbc/*db*
-                (assoc jdbc/*db*
+      (binding [clojure.java.jdbc/*db*
+                (assoc #'jdbc/*db*
                   :connection (:connection con)
                   :level 0
                   :rollback (atom false)

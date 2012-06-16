@@ -8,11 +8,10 @@
     :url    "http://github.com/LauJensen/clojureql"}
   (:refer-clojure
    :exclude [take drop sort distinct conj! disj! compile case resultset-seq])
+  (:require [clojure.java.jdbc :as jdbc])
   (:use
     [clojureql internal predicates]
     [clojure.string :only [join upper-case] :rename {join join-str}]
-    [clojure.java.jdbc :as jdbc]
-;;    [clojure.java.jdbc.internal :as jdbc]
     [clojure.core.incubator :only [-?> -?>>]]
     [clojure.walk :only (postwalk-replace)]))
 

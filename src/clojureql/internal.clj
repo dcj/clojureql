@@ -351,7 +351,7 @@
   (with-open [stmt (jdbc/prepare-statement (jdbc/find-connection) sql)]
     (doseq [[idx v] (map vector (iterate inc 1) params)]
       (.setObject stmt idx v))
-    (if-let [fetch-size (-> jdbc/*db* :opts :fetch-size)]
+    (if-let [fetch-size (-> #'jdbc/*db* :opts :fetch-size)]
       (do
         (.setFetchSize stmt fetch-size)
         (jdbc/transaction
